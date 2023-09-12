@@ -20,10 +20,18 @@ from launch.substitutions import EnvironmentVariable
 import pathlib
 import launch.actions
 from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PythonExpression
+
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
+    
+    # Create the launch configuration variables
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
+
+
     botanbot_navigation2_dir = get_package_share_directory(
         'botanbot_navigation2')
     parameters_file_dir = os.path.join(botanbot_navigation2_dir, 'params')
@@ -42,7 +50,8 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_local_filter_node',
             output='screen',
-            parameters=[parameters_file_path],
+            parameters=[parameters_file_path,
+                        {'use_sim_time' : use_sim_time}],
             remappings=[('odometry/filtered', 'odometry/local')]
         ),
         launch_ros.actions.Node(
@@ -50,7 +59,8 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_global_filter_node',
             output='screen',
-            parameters=[parameters_file_path],
+            parameters=[parameters_file_path,
+                        {'use_sim_time' : use_sim_time}],
             remappings=[('odometry/filtered', 'odometry/global')]
         ),
         launch_ros.actions.Node(
@@ -58,7 +68,8 @@ def generate_launch_description():
             executable='navsat_transform_node',
             name='navsat_transform_node',
             output='screen',
-            parameters=[parameters_file_path],
+            parameters=[parameters_file_path,
+                        {'use_sim_time' : use_sim_time}],
             remappings=[('imu/data', 'imu/absolute'),
                         ('gps/fix', 'gps/fix'),
                         ('gps/filtered', 'gps/filtered'),

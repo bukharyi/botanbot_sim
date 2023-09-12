@@ -37,7 +37,7 @@ def generate_launch_description():
 
     lifecycle_nodes = ['controller_server',
                        'planner_server',
-                       'recoveries_server',
+                       'behavior_server',
                        'bt_navigator',
                        'waypoint_follower',
                        'map_server']
@@ -53,6 +53,7 @@ def generate_launch_description():
                   ('cmd_vel', 'vox_nav/cmd_vel')]
 
     # Create our own temporary YAML files that include substitutions
+    # === Bukh - they recreate the yaml file here.
     param_substitutions = {
         'use_sim_time': use_sim_time,
         'default_bt_xml_filename': default_bt_xml_filename,
@@ -107,7 +108,7 @@ def generate_launch_description():
             package='nav2_controller',
             executable='controller_server',
             output='screen',
-            parameters=[configured_params],
+            parameters=[configured_params, {'use_sim_time':use_sim_time}],
             remappings=remappings),
 
         Node(
@@ -115,15 +116,15 @@ def generate_launch_description():
             executable='planner_server',
             name='planner_server',
             output='screen',
-            parameters=[configured_params],
+            parameters=[configured_params, {'use_sim_time':use_sim_time}],
             remappings=remappings),
 
         Node(
-            package='nav2_recoveries',
-            executable='recoveries_server',
-            name='recoveries_server',
+            package='nav2_behaviors',
+            executable='behavior_server',
+            name='behavior_server',
             output='screen',
-            parameters=[configured_params],
+            parameters=[configured_params, {'use_sim_time':use_sim_time}],
             remappings=remappings),
 
         Node(
@@ -131,7 +132,7 @@ def generate_launch_description():
             executable='bt_navigator',
             name='bt_navigator',
             output='screen',
-            parameters=[configured_params],
+            parameters=[configured_params, {'use_sim_time':use_sim_time}],
             remappings=remappings),
 
         Node(
@@ -139,7 +140,7 @@ def generate_launch_description():
             executable='waypoint_follower',
             name='waypoint_follower',
             output='screen',
-            parameters=[configured_params],
+            parameters=[configured_params, {'use_sim_time':use_sim_time}],
             remappings=remappings),
 
         Node(
@@ -147,7 +148,7 @@ def generate_launch_description():
             executable='map_server',
             name='map_server',
             output='screen',
-            parameters=[configured_params],
+            parameters=[configured_params, {'use_sim_time':use_sim_time}],
             remappings=remappings),
         Node(
             package='nav2_lifecycle_manager',
